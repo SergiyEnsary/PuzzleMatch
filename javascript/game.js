@@ -7,7 +7,7 @@ let gameOptions = {
 let gameConfig = {
     width : 600,
     height: 600,
-    scene: [],
+    scene: [GameScene],
     backgroundColor: 0x222222
 };
 
