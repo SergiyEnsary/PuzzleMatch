@@ -1,3 +1,4 @@
+import GameLogic from "/js/javascript/GameLogic"
 class GameScene extends Phaser.Scene{
 
     constructor() {
@@ -27,7 +28,7 @@ class GameScene extends Phaser.Scene{
         ).setScale(2);
         let game = new GameLogic({
             rows: 8,
-            columns: 8
+            columns: 6
         });
         console.log(game.board);
     }
