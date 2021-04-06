@@ -13,11 +13,9 @@ steps:
 - task: Npm@1
   inputs:
     command: install
-    workingDir: PuzzleMatch
     verbose: true
 
 - task: Npm@1
   inputs:
     customCommand: coverage
-    workingDir: PuzzleMatch
     verbose: true
