@@ -34,7 +34,7 @@ class GameLogic{
     }
 
     random(min, max){
-        return Phaser.Math.Between(min, max);
+        return Math.random() * (max - min) + min;
     }
 }
 
