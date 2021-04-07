@@ -12,9 +12,9 @@ describe("Test GameLogic", () => {
         expect(gameLogic.getColumns()).toStrictEqual(3)
         expect(gameLogic.getBoard()).toStrictEqual([[0, 1, 2, 3], [0, 1, 2, 3], [0, 1, 2, 3]])
     });
-    /*it("Test Random", () => {
+    it("Test Random", () => {
         let gameLogic = new GameLogic({rows: 4, columns: 3});
         expect(gameLogic.random(0, 100)).toBeLessThan(100)
         expect(gameLogic.random(0, 100)).toBeGreaterThanOrEqual(0)
-    })*/
+    })
 });
