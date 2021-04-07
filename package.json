@@ -14,7 +14,7 @@
   "scripts": {
     "test": "jest test/GameLogic.test.js",
     "coverage": "jest test/GameLogic.test.js --coverage",
-    "badges": "npm run coverage && jest-coverage-badges"
+    "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme"
   },
   "jest": {
     "coverageReporters": [
@@ -25,7 +25,7 @@
   },
   "husky": {
     "hooks": {
-      "prepare-commit-msg": "npm run badges && istanbul-badges-readme && git add -A 'README.md'"
+      "prepare-commit-msg": "npm run badges && git add -A 'README.md'"
     }
   }
 }
