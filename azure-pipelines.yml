@@ -17,5 +17,5 @@ steps:
 
 - task: Npm@1
   inputs:
-    customCommand: coverage
+    customCommand: badges
     verbose: true
