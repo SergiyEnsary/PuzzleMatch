@@ -14,8 +14,7 @@
   "scripts": {
     "test": "jest test/GameLogic.test.js",
     "coverage": "jest test/GameLogic.test.js --coverage",
-    "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme"
   },
   "husky": {
     "hooks": {
