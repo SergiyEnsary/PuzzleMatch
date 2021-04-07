@@ -25,7 +25,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run badges && istanbul-badges-readme && git add -A 'README.md'"
+      "prepare-commit-msg": "npm run badges && istanbul-badges-readme && git add -A 'README.md'"
     }
   }
 }
