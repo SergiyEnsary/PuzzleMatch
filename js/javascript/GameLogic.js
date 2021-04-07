@@ -21,18 +21,30 @@ class GameLogic{
         return board;
     }
 
+    /*
+     * Return number of rows on this board
+     */
     getRows(){
         return this.rows;
     }
 
+    /*
+     * Return number of columns on this board
+     */
     getColumns(){
         return this.columns;
     }
 
+    /*
+     * Return the board
+     */
     getBoard(){
         return this.board;
     }
 
+    /*
+     * Return a random number within range min < max(exclusive)
+     */
     random(min, max){
         return Math.random() * (max - min) + min;
     }
