@@ -15,11 +15,11 @@
     "test": "jest test/GameLogic.test.js",
     "coverage": "jest test/GameLogic.test.js --coverage",
     "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
   },
   "husky": {
     "hooks": {
-      "pre-commit": "git add 'README.md'"
+      "pre-commit": "npm run badges && exit 0 && git add -A 'README.md'"
     }
   },
   "jest": {
