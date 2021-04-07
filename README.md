@@ -1,5 +1,5 @@
 # PuzzleMatch
-[![Branches](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-branches.svg)](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-branches.svg)
-[![Functions](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-functions.svg)](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-functions.svg)
-[![Lines](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-lines.svg)](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-lines.svg)
-[![Unstable](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-statements.svg)](https://raw.githubusercontent.com/SergiyEnsary/PuzzleMatch/main/coverage/badge-statements.svg)
+![Statements](https://img.shields.io/badge/Coverage-93.75%25-brightgreen.svg)
+![Branches](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)
+![Functions](https://img.shields.io/badge/Coverage-83.33%25-yellow.svg)
+![Lines](https://img.shields.io/badge/Coverage-92.86%25-brightgreen.svg)

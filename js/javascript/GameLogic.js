@@ -28,6 +28,14 @@ class GameLogic{
     getColumns(){
         return this.columns;
     }
+
+    getBoard(){
+        return this.board;
+    }
+
+    random(min, max){
+        return Math.random() * (max - min) + min;
+    }
 }
 
 module.exports = GameLogic
