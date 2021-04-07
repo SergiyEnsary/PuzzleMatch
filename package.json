@@ -14,13 +14,13 @@
   "scripts": {
     "test": "jest test/GameLogic.test.js",
     "coverage": "jest test/GameLogic.test.js --coverage",
-    "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme"
+    "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme && exit 0",
+    "add": "git add -A README.md"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run badges && exit 0 && git add -A 'README.md'"
-    }
-  },
+  "pre-commit": [
+    "badges",
+    "add"
+  ],
   "jest": {
     "coverageReporters": [
       "json-summary",
