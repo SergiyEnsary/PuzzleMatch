@@ -1,9 +1,5 @@
 let game;
 
-let gameOptions = {
-    gemSize: 50
-};
-
 let gameConfig = {
     width : 600,
     height: 600,

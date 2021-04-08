@@ -1,8 +1,9 @@
-import GameLogic from "/js/javascript/GameLogic"
 class GameScene extends Phaser.Scene{
 
     constructor() {
         super("PlayGame");
+        this.gems = 6;
+        this.gemsize = 50;
     }
 
     preload(){
@@ -11,8 +12,8 @@ class GameScene extends Phaser.Scene{
         let imagePath = "assets/images/";
 
         this.load.spritesheet("gems", spritePath + "gems.png", {
-            frameWidth : gameOptions.gemSize,
-            frameHeight: gameOptions.gemSize
+            frameWidth : this.gemsize,
+            frameHeight: this.gemsize
         });
         this.load.image("background", imagePath+"background.png");
         this.load.bitmapFont("pixelFont", fontPath+"font.png", fontPath+"font.xml")
@@ -26,10 +27,11 @@ class GameScene extends Phaser.Scene{
             gameConfig.height,
             "background"
         ).setScale(2);
-        let game = new GameLogic({
+        let size = {
             rows: 8,
             columns: 6
-        });
-        console.log(game.board);
+        }
+        let gameLogic = new GameLogic(size);
+        console.log(gameLogic.board);
     }
 }
