@@ -27,11 +27,24 @@ class GameScene extends Phaser.Scene{
             gameConfig.height,
             "background"
         ).setScale(2);
+        let gemTypes = Array.from(new Array(this.gems), (val, index) => index+1)
         let size = {
             rows: 8,
-            columns: 6
+            columns: 8,
+            gemTypes: gemTypes
         }
-        let gameLogic = new GameLogic(size);
-        console.log(gameLogic.board);
+        this.gameLogic = new GameLogic(size);
+        console.log(this.gameLogic);
+        this.drawField();
+    }
+
+    drawField(){
+        for(let i = 0; i < this.gameLogic.getRows(); i ++){
+            for(let j = 0; j < this.gameLogic.getColumns(); j ++){
+                let gemX = gameOptions.gemSize*1.1 * j + gameOptions.gemSize / 2;
+                let gemY = gameOptions.gemSize*1.1 * i + gameOptions.gemSize / 2;
+                let gem = this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(i, j));
+            }
+        }
     }
 }
