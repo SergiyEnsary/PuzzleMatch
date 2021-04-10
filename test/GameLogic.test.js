@@ -1,5 +1,5 @@
-const GameLogic = require("../js/javascript/GameLogic");
-const Gem = require("../js/javascript/Gem");
+const GameLogic = require("../js/javascript/GameLogic.mjs");
+const Gem = require("../js/javascript/Gem.mjs");
 
 describe("Test Files", () => {
     let game1 = new GameLogic({rows: 2, columns: 2, gemTypes: [1, 2, 3, 4, 5, 6]});
@@ -17,12 +17,13 @@ describe("Test Files", () => {
         expect(game1.getBoard()).toStrictEqual(expected)
         for(let col = 0; col < game1.getColumns(); col++) {
             for (let row = 0; row < game1.getRows(); row++) {
-                expect(game1.getVal(row, col)).toStrictEqual(game1.getVal(row, col))
+                let boardVal = game1.getVal(row, col);
+                expect(boardVal).toStrictEqual(game1.getVal(row, col))
+                expect(game1.getRow(boardVal)).toEqual(row)
+                expect(game1.getColumn(boardVal)).toEqual(col)
             }
         }
-        expect(()=>{
-            game1.getVal(5,4)
-        }).toThrow("getVal out of range");
+        expect(()=>{game1.getVal(5,4)}).toThrow("getVal out of range");
     });
     it("Test Setters", () =>{
         let gameLogic = new GameLogic({rows: 4, columns: 3});
@@ -32,6 +33,17 @@ describe("Test Files", () => {
         expect(gameLogic.setVal(0,-1,5)).toBe(false)
         expect(gameLogic.setVal(0,4,5)).toBe(false)
     });
+    it("Test Gem Swap", () => {
+        let gameBoard = new GameLogic({rows:2, columns:2})
+        let gem1 = gameBoard.getVal(0,0)
+        let gem1Type = gem1.getGemType()
+        let gem2 = gameBoard.getVal(0,1)
+        let gem2Type = gem2.getGemType()
+        gameBoard.swapGems(gem1, gem2)
+        expect(gameBoard.getVal(0,0).getGemType()).toEqual(gem2Type)
+        expect(gameBoard.getVal(0,1).getGemType()).toEqual(gem1Type)
+
+    })
     it("Test Utils", () => {
         let gameLogic = new GameLogic({rows: 4, columns: 3});
         expect(gameLogic.random(0, 100)).toBeLessThan(100)
@@ -45,9 +57,7 @@ describe("Test Files", () => {
         for(let col = 0; col < game1.getColumns(); col++) {
             for(let row = 0; row < game1.getRows(); row++) {
                 let value = game1.getVal(row, col);
-                expect(value).toStrictEqual(value)
-                expect(value).toBeGreaterThanOrEqual(0)
-                expect(value).toBeLessThan(6)
+                expect(value).toBeInstanceOf(Gem)
             }
         }
     })
@@ -72,5 +82,13 @@ describe("Test Files", () => {
         expect(gem2.getX()).toEqual(1)
         expect(gem2.getY()).toEqual(1)
         expect(gem2.getGemType()).toEqual(2)
+    })
+    it("Gem setters", () =>{
+        gem0.setX(1)
+        gem0.setY(1)
+        gem0.setGemType(1)
+        expect(gem0.getX()).toEqual(1)
+        expect(gem0.getY()).toEqual(1)
+        expect(gem0.getGemType()).toEqual(1)
     })
 });

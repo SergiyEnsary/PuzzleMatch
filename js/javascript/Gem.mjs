@@ -17,6 +17,18 @@ class Gem {
     getGemType(){
         return this.type;
     }
+
+    setGemType(type){
+        this.type = type;
+    }
+
+    setX(x){
+        this.x = x;
+    }
+
+    setY(y){
+        this.y = y;
+    }
 }
 
-module.exports = Gem;
+module.exports = Gem
