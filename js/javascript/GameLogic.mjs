@@ -1,5 +1,4 @@
-const Gem = require("./Gem");
-
+const Gem = require("./Gem.mjs")
 class GameLogic{
 
     constructor(game){
@@ -37,10 +36,13 @@ class GameLogic{
     }
 
     /*
-     *
+     * Swap places of gem1 and gem2
      */
     swapGems(gem1, gem2){
-
+        let temp1 = new Gem(gem1.getX(), gem1.getY(), gem2.getGemType());
+        let temp2 = new Gem(gem2.getX(), gem2.getY(), gem1.getGemType());
+        this.setVal(gem1.getY(), gem1.getX(), temp1);
+        this.setVal(gem2.getY(), gem2.getX(), temp2);
     }
 
     /*
@@ -65,13 +67,27 @@ class GameLogic{
     }
 
     /*
-     * Get specific Gem type at row and column
+     * Get specific Gem at row and column
      */
     getVal(row, col){
         if(this.isInRange(0, this.getRows(), row) && this.isInRange(0, this.getColumns(), col)) {
-            return this.board[col][row].getGemType();
+            return this.board[col][row];
         }
         throw new Error("getVal out of range");
+    }
+
+    /*
+     * Return board row of the gem
+     */
+    getRow(gem){
+        return gem.getY();
+    }
+
+    /*
+     * Return board column of the gem
+     */
+    getColumn(gem){
+        return gem.getX();
     }
 
     /*
@@ -92,6 +108,7 @@ class GameLogic{
     random(min, max){
         return Math.floor(Math.random() * (max - min) + min);
     }
+
     /*
      * Check if number within range
      * min(inclusive) and max(exclusive)

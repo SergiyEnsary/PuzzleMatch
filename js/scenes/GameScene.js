@@ -34,16 +34,16 @@ class GameScene extends Phaser.Scene{
             gemTypes: gemTypes
         }
         this.gameLogic = new GameLogic(size);
-        console.log(this.gameLogic);
         this.drawField();
+        console.log(this.gameLogic.getBoard())
     }
 
     drawField(){
-        for(let i = 0; i < this.gameLogic.getRows(); i ++){
-            for(let j = 0; j < this.gameLogic.getColumns(); j ++){
-                let gemX = gameOptions.gemSize*1.1 * j + gameOptions.gemSize / 2;
-                let gemY = gameOptions.gemSize*1.1 * i + gameOptions.gemSize / 2;
-                let gem = this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(i, j));
+        for(let row = 0; row < this.gameLogic.getRows(); row ++){
+            for(let col = 0; col < this.gameLogic.getColumns(); col ++){
+                let gemX = gameOptions.gemSize*1.1 * row + gameOptions.gemSize / 2;
+                let gemY = gameOptions.gemSize*1.1 * col + gameOptions.gemSize / 2;
+                this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType());
             }
         }
     }
