@@ -31,4 +31,4 @@ class Gem {
     }
 }
 
-module.exports = Gem
+module.exports = Gem;

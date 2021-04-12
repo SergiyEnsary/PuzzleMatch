@@ -1,9 +1,13 @@
+const GameLogic = require("../javascript/GameLogic.js")
 class GameScene extends Phaser.Scene{
 
     constructor() {
         super("PlayGame");
         this.gems = 6;
-        this.gemsize = 50;
+        this.gemSize = 50;
+        this.dragging = true;
+        this.canPick = true;
+        this.selectedGem = null;
     }
 
     preload(){
@@ -12,8 +16,8 @@ class GameScene extends Phaser.Scene{
         let imagePath = "assets/images/";
 
         this.load.spritesheet("gems", spritePath + "gems.png", {
-            frameWidth : this.gemsize,
-            frameHeight: this.gemsize
+            frameWidth : this.gemSize,
+            frameHeight: this.gemSize
         });
         this.load.image("background", imagePath+"background.png");
         this.load.bitmapFont("pixelFont", fontPath+"font.png", fontPath+"font.xml")
@@ -23,8 +27,8 @@ class GameScene extends Phaser.Scene{
         this.background = this.add.tileSprite(
             0,
             0,
-            gameConfig.width,
-            gameConfig.height,
+            this.game.config.width,
+            this.game.config.height,
             "background"
         ).setScale(2);
         let gemTypes = Array.from(new Array(this.gems), (val, index) => index+1)
@@ -34,17 +38,41 @@ class GameScene extends Phaser.Scene{
             gemTypes: gemTypes
         }
         this.gameLogic = new GameLogic(size);
+        this.gameLogic.randomCreate(size.gemTypes.length);
         this.drawField();
         console.log(this.gameLogic.getBoard())
+        this.input.on("pointerdown", this.gemSelect, this)
     }
 
     drawField(){
         for(let row = 0; row < this.gameLogic.getRows(); row ++){
             for(let col = 0; col < this.gameLogic.getColumns(); col ++){
-                let gemX = gameOptions.gemSize*1.1 * row + gameOptions.gemSize / 2;
-                let gemY = gameOptions.gemSize*1.1 * col + gameOptions.gemSize / 2;
+                let gemX = this.gemSize * row + this.gemSize / 2;
+                let gemY = this.gemSize * col + this.gemSize / 2;
                 this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType());
             }
         }
     }
+
+    gemSelect(pointer){
+        if(this.canPick){
+            var row = Math.floor((pointer.x) / this.gemSize);
+            var col = Math.floor((pointer.y) / this.gemSize);
+            this.dragging = true;
+            if(row < this.gameLogic.getRows() && col < this.gameLogic.getColumns()){
+                var gem = this.gameLogic.getVal(row, col);
+                if(this.selectedGem != null){
+                    this.gameLogic.swapGems(this.selectedGem, gem);
+                    this.selectedGem = null;
+                }
+                else{
+                    this.selectedGem = gem;
+                }
+                this.drawField();
+            }
+        }
+    }
+
 }
+
+module.exports = GameScene

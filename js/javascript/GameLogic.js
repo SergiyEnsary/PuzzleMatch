@@ -1,4 +1,4 @@
-const Gem = require("./Gem.mjs")
+const Gem = require("./Gem.js")
 class GameLogic{
 
     constructor(game){
