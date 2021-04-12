@@ -1,5 +1,5 @@
-const GameLogic = require("../js/javascript/GameLogic.mjs");
-const Gem = require("../js/javascript/Gem.mjs");
+const GameLogic = require("../js/javascript/GameLogic.js");
+const Gem = require("../js/javascript/Gem.js");
 
 describe("Test Files", () => {
     let game1 = new GameLogic({rows: 2, columns: 2, gemTypes: [1, 2, 3, 4, 5, 6]});
