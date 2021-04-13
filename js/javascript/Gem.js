@@ -4,6 +4,7 @@ class Gem {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.sprite = null;
     }
 
     getX(){
@@ -18,6 +19,10 @@ class Gem {
         return this.type;
     }
 
+    getSprite(){
+        return this.sprite;
+    }
+
     setGemType(type){
         this.type = type;
     }
@@ -28,6 +33,10 @@ class Gem {
 
     setY(y){
         this.y = y;
+    }
+
+    setSprite(sprite){
+        this.sprite = sprite;
     }
 }
 
