@@ -66,29 +66,34 @@ describe("Test Files", () => {
     let gem1 = new Gem(1,0,1);
     let gem2 = new Gem(1,1,2);
     it("Gem creation", () => {
-        expect(gem0).toEqual({ x: 0, y: 0, type: 0 })
-        expect(gem1).toEqual({ x: 1, y: 0, type: 1 })
-        expect(gem2).toEqual({ x: 1, y: 1, type: 2 })
+        expect(gem0).toEqual({ x: 0, y: 0, type: 0, sprite: null })
+        expect(gem1).toEqual({ x: 1, y: 0, type: 1, sprite: null })
+        expect(gem2).toEqual({ x: 1, y: 1, type: 2, sprite: null })
     })
     it("Gem getters", () =>{
         expect(gem0.getX()).toEqual(0)
         expect(gem0.getY()).toEqual(0)
         expect(gem0.getGemType()).toEqual(0)
+        expect(gem0.getSprite()).toEqual(null)
 
         expect(gem1.getX()).toEqual(1)
         expect(gem1.getY()).toEqual(0)
         expect(gem1.getGemType()).toEqual(1)
+        expect(gem1.getSprite()).toEqual(null)
 
         expect(gem2.getX()).toEqual(1)
         expect(gem2.getY()).toEqual(1)
         expect(gem2.getGemType()).toEqual(2)
+        expect(gem2.getSprite()).toEqual(null)
     })
     it("Gem setters", () =>{
         gem0.setX(1)
         gem0.setY(1)
         gem0.setGemType(1)
+        gem0.setSprite("test")
         expect(gem0.getX()).toEqual(1)
         expect(gem0.getY()).toEqual(1)
         expect(gem0.getGemType()).toEqual(1)
+        expect(gem0.getSprite()).toEqual("test")
     })
 });
