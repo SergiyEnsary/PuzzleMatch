@@ -46,6 +46,74 @@ class GameLogic{
     }
 
     /*
+     * Are two gems next to each other and will they make a match
+     */
+    canSwap(gem1, gem2){
+        if(this.adjacentX(gem1, gem2) || this.adjacentY(gem1, gem2)){
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * Are two gems adjacent on X with the same y values
+     */
+    adjacentX(gem1, gem2){
+        let xAdjacent = Math.abs(gem1.getX() - gem2.getX()) <= 1;
+        return (xAdjacent && gem1.getY() === gem2.getY());
+    }
+
+    /*
+     * Are two gems adjacent on Y with the same x values
+     */
+    adjacentY(gem1, gem2){
+        let yAdjacent = Math.abs(gem1.getY() - gem2.getY()) <= 1;
+        return (yAdjacent && gem1.getX() === gem2.getX());
+    }
+
+    /* Commented out since it is not yet used or tested
+    /!*
+     * Is there a horizontal match
+     *!/
+    isHorizontal(){
+        var matched = 1;
+        for(let col = 1; col < this.getColumns(); col++){
+            for(let row = 0; row < this.getRows(); row ++){
+                let gem = this.getVal(row, col);
+                if(gem.getGemType() !== this.getVal(row, col-1).getGemType()){
+                    matched = 0;
+                }
+                matched += 1;
+                if(matched >= 3){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /!*
+     * Is there a vertical match
+     *!/
+    isVertical(){
+        var matched = 1;
+        for(let col = 0; col < this.getColumns(); col++){
+            for(let row = 1; row < this.getRows(); row ++){
+                let gem = this.getVal(row, col);
+                if(gem.getGemType() !== this.getVal(row-1, col).getGemType()){
+                    matched = 0;
+                }
+                matched += 1;
+                if(matched >= 3){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    */
+
+    /*
      * Return number of rows on this board
      */
     getRows(){
