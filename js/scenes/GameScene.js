@@ -89,7 +89,9 @@ class GameScene extends Phaser.Scene{
                 var gem = this.gameLogic.getVal(row, col);
                 console.log(gem);
                 if(this.selectedGem != null){
-                    this.gameLogic.swapGems(this.selectedGem, gem);
+                    if(this.gameLogic.canSwap(this.selectedGem, gem)) {
+                        this.gameLogic.swapGems(this.selectedGem, gem);
+                    }
                     this.selectedGem = null;
 
                 }
