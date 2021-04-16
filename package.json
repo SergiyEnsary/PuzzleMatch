@@ -17,7 +17,7 @@
     "test": "jest test/GameLogic.test.js",
     "coverage": "jest test/GameLogic.test.js --coverage",
     "badges": "npm run coverage && jest-coverage-badges && istanbul-badges-readme && exit 0",
-    "add": "git add -A README.md && exit 0",
+    "add": "git add README.md && exit 0",
     "build": "browserify ./js/javascript/game.js ./js/scenes/GameScene.js ./js/javascript/GameLogic.js ./js/javascript/Gem.js -o build/bundle.js"
   },
   "pre-commit": [
