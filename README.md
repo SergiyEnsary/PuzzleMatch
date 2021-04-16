@@ -1,2 +1,2 @@
 # PuzzleMatch
-![Functions](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)
+![Functions](https://img.shields.io/badge/Coverage-96.55%25-brightgreen.svg)

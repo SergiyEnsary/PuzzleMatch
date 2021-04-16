@@ -48,8 +48,8 @@ class GameScene extends Phaser.Scene{
         }
         this.gameLogic = new GameLogic(size);
         this.gameLogic.randomCreate(size.gemTypes.length);
+        this.gameLogic.shuffle()
         this.drawField();
-        console.log(this.gameLogic.getBoard())
         this.input.on("pointerdown", this.gemSelect, this)
     }
 
@@ -89,6 +89,7 @@ class GameScene extends Phaser.Scene{
                 var gem = this.gameLogic.getVal(row, col);
                 console.log(gem);
                 if(this.selectedGem != null){
+                    console.log(this.gameLogic.canSwap(this.selectedGem, gem))
                     if(this.gameLogic.canSwap(this.selectedGem, gem)) {
                         this.gameLogic.swapGems(this.selectedGem, gem);
                     }
@@ -98,7 +99,6 @@ class GameScene extends Phaser.Scene{
                 else{
                     this.selectedGem = gem;
                 }
-                this.drawField();
             }
         }
     }

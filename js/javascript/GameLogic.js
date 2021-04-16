@@ -6,21 +6,19 @@ class GameLogic{
         this.columns = game.columns;
         this.canPick = true;
         this.gemTypes = game.gemTypes;
-        this.board = this.generateBoard(this.columns, this.rows, game.gems);
+        this.board = [];
     }
 
     /*
      *  Generate a board with gemType
      */
     generateBoard(cols, rows){
-        var board = [];
         for(let column = 0; column<cols; column++){
-            board[column] = [];
+            this.board[column] = [];
             for(let row = 0; row<rows; row++){
-                board[column][row] = new Gem(column, row, row);
+                this.board[column][row] = new Gem(column, row, row);
             }
         }
-        return board;
     }
 
     /*
@@ -50,7 +48,7 @@ class GameLogic{
      */
     canSwap(gem1, gem2){
         if(this.adjacentX(gem1, gem2) || this.adjacentY(gem1, gem2)){
-            return true;
+            return (this.makesMatch(gem1, gem2));
         }
         return false;
     }
@@ -71,20 +69,14 @@ class GameLogic{
         return (yAdjacent && gem1.getX() === gem2.getX());
     }
 
-    /* Commented out since it is not yet used or tested
-    /!*
+    /*
      * Is there a horizontal match
-     *!/
+     */
     isHorizontal(){
-        var matched = 1;
-        for(let col = 1; col < this.getColumns(); col++){
+        for(let col = 0; col < this.getColumns()-2; col++){
             for(let row = 0; row < this.getRows(); row ++){
                 let gem = this.getVal(row, col);
-                if(gem.getGemType() !== this.getVal(row, col-1).getGemType()){
-                    matched = 0;
-                }
-                matched += 1;
-                if(matched >= 3){
+                if(gem.getGemType() === this.getVal(row, col+1).getGemType() &&  gem.getGemType() === this.getVal(row, col+2).getGemType()){
                     return true;
                 }
             }
@@ -92,26 +84,60 @@ class GameLogic{
         return false;
     }
 
-    /!*
+    /*
      * Is there a vertical match
-     *!/
+     */
     isVertical(){
-        var matched = 1;
         for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 1; row < this.getRows(); row ++){
+            for(let row = 0; row < this.getRows()-2; row ++){
                 let gem = this.getVal(row, col);
-                if(gem.getGemType() !== this.getVal(row-1, col).getGemType()){
-                    matched = 0;
-                }
-                matched += 1;
-                if(matched >= 3){
+                if(gem.getGemType() === this.getVal(row+1, col).getGemType() && gem.getGemType() === this.getVal(row+2, col).getGemType()){
                     return true;
                 }
             }
         }
         return false;
     }
-    */
+
+    /*
+      * Shuffle the current board until new moves arise
+      * while maintaining the same gems
+      */
+    shuffle(){
+        var gemList = [];
+        for(let col = 0; col < this.getColumns(); col++){
+            for(let row = 0; row < this.getRows(); row++){
+                gemList.push(this.getVal(row, col));
+            }
+        }
+        for(let col = 0; col < this.getColumns(); col++){
+            for(let row = 0; row < this.getRows(); row++){
+                var gemIndex = this.random(0, gemList.length);
+                var gem = gemList[gemIndex];
+                gem.setX(col);
+                gem.setY(row);
+                this.setVal(row, col, gem);
+                gemList.splice(gemIndex, 1);
+            }
+        }
+        if(this.isVertical() || this.isHorizontal()){
+            this.shuffle();
+        }
+    }
+
+    /*
+     * Does this move make a match
+     */
+    makesMatch(gem1, gem2){
+        if(gem2.getGemType() == this.getVal(gem1.getX()))
+        this.swapGems(gem1, gem2)
+        if(this.isVertical() || this.isHorizontal()){
+            this.swapGems(gem1, gem2);
+            return true;
+        }
+        this.swapGems(gem1, gem2);
+        return false;
+    }
 
     /*
      * Return number of rows on this board
