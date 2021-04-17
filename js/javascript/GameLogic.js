@@ -5,7 +5,6 @@ class GameLogic{
         this.rows = game.rows;
         this.columns = game.columns;
         this.canPick = true;
-        this.gemTypes = game.gemTypes;
         this.board = [];
     }
 
@@ -27,6 +26,7 @@ class GameLogic{
      */
     randomCreate(num){
         for(let col = 0; col < this.getColumns(); col++){
+            this.board[col] = [];
             for(let row = 0; row < this.getRows(); row++){
                 this.board[col][row] = new Gem(col, row, this.random(0, num));
             }
@@ -42,6 +42,22 @@ class GameLogic{
         this.setVal(gem1.getY(), gem1.getX(), temp1);
         this.setVal(gem2.getY(), gem2.getX(), temp2);
     }
+    /* Waiting for tests
+    /*
+     * Destroy selected gems
+     *!/
+    destroyGems(gemList){
+        gemList.forEach(this.gemDelete(gem))
+    }
+
+    /*
+     * Remove a gem
+     *!/
+    gemDelete(gem){
+        let row = gem.getY()
+        this.board = this.getBoard()[gem.getX()].splice(row, 1);
+    }
+    */
 
     /*
      * Are two gems next to each other and will they make a match
@@ -129,7 +145,7 @@ class GameLogic{
      * Does this move make a match
      */
     makesMatch(gem1, gem2){
-        if(gem2.getGemType() == this.getVal(gem1.getX()))
+        if(gem2.getGemType() === this.getVal(gem1.getX()).getGemType())
         this.swapGems(gem1, gem2)
         if(this.isVertical() || this.isHorizontal()){
             this.swapGems(gem1, gem2);

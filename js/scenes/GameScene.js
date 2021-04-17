@@ -5,8 +5,6 @@ class GameScene extends Phaser.Scene{
         super("PlayGame");
         this.gems = 6;
         this.gemSize = 50;
-        this.dragging = true;
-        this.canPick = true;
         this.selectedGem = null;
     }
 
@@ -40,14 +38,12 @@ class GameScene extends Phaser.Scene{
         );
         this.background.setOrigin(0,0)
 
-        let gemTypes = Array.from(new Array(this.gems), (val, index) => index + 1)
         let size = {
             rows: 8,
-            columns: 8,
-            gemTypes: gemTypes
+            columns: 8
         }
         this.gameLogic = new GameLogic(size);
-        this.gameLogic.randomCreate(size.gemTypes.length);
+        this.gameLogic.randomCreate(this.gems);
         this.gameLogic.shuffle()
         this.drawField();
         this.input.on("pointerdown", this.gemSelect, this)
@@ -81,7 +77,7 @@ class GameScene extends Phaser.Scene{
     }
 
     gemSelect(pointer){
-        if(this.canPick){
+        if(this.gameLogic.canPick){
             var row = Math.floor((pointer.y) / this.gemSize);
             var col = Math.floor((pointer.x) / this.gemSize);
             this.dragging = true;
