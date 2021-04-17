@@ -9,7 +9,7 @@ describe("Test Files", () => {
     ]
     it("Board constructor", () => {
         expect(game1.board).toStrictEqual([])
-        expect(game1).toEqual({board: [], columns: 2, rows: 2, gemTypes: [1, 2, 3, 4, 5, 6], canPick: true})
+        expect(game1).toEqual({board: [], columns: 2, rows: 2, canPick: true})
     });
     it("Test Getters", () => {
         game1.generateBoard(2,2)
