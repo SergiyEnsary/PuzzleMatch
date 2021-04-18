@@ -222,6 +222,7 @@ class GameLogic{
         }
         return false;
     }
+
     /*
      * Set new column in the board
      */
@@ -243,6 +244,7 @@ class GameLogic{
     isInRange(min, max, value){
         return min <= value && value < max;
     }
+
     /*
      * Return a set of all gems that make up matches
      */
@@ -289,7 +291,6 @@ class GameLogic{
                 this.getVal(row, col).setY(row);
             }
         }
-        console.log(this.board)
     }
 }
 

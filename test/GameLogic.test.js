@@ -6,54 +6,85 @@ describe("Test Files", () => {
     let expected = [
         [new Gem(0,0,0), new Gem(0,1,1)],
         [new Gem(1,0,0), new Gem(1,1,1)]
-    ]
+    ];
+
     it("Board constructor", () => {
-        expect(game1.board).toStrictEqual([])
-        expect(game1).toEqual({board: [], columns: 2, rows: 2, canPick: true})
+        expect(game1.board).toStrictEqual([]);
+        expect(game1).toEqual({board: [], columns: 2, rows: 2, canPick: true});
     });
     it("Test Getters", () => {
-        game1.generateBoard(2,2)
-        expect(game1.getRows()).toStrictEqual(2)
-        expect(game1.getColumns()).toStrictEqual(2)
-        expect(game1.getBoard()).toStrictEqual(expected)
+        let gb2 = new GameLogic({rows: 3, columns: 1, gems: 1});
+        let gb3 = new GameLogic({rows: 1, columns: 3, gems: 1});
+        gb2.generateBoard(1,3);
+        gb3.generateBoard(3,1)
+
+        gb2.setVal(0,0, new Gem(0,0,0));
+        gb2.setVal(1,0, new Gem(0,1,0));
+        gb2.setVal(2,0, new Gem(0,2,0));
+
+        gb3.setVal(0,0, new Gem(0,0,0));
+        gb3.setVal(0,1, new Gem(1,0,0));
+        gb3.setVal(0,2, new Gem(2,0,0));
+
+        game1.generateBoard(2,2);
+
+        let set2 = new Set();
+        set2.add(gb2.getVal(0,0));
+        set2.add(gb2.getVal(1,0));
+        set2.add(gb2.getVal(2,0));
+        expect(gb2.getMatches()).toEqual(set2);
+        gb2.destroyGems(gb2.getMatches());
+        gb2.updateGems();
+
+        let set3 = new Set();
+        set3.add(gb3.getVal(0,0));
+        set3.add(gb3.getVal(0,1));
+        set3.add(gb3.getVal(0,2));
+        expect(gb3.getMatches()).toEqual(set3);
+        gb3.destroyGems(gb3.getMatches());
+        gb3.updateGems();
+
+        expect(game1.getRows()).toStrictEqual(2);
+        expect(game1.getColumns()).toStrictEqual(2);
+        expect(game1.getBoard()).toStrictEqual(expected);
         for(let col = 0; col < game1.getColumns(); col++) {
             for (let row = 0; row < game1.getRows(); row++) {
                 let boardVal = game1.getVal(row, col);
-                expect(boardVal).toStrictEqual(game1.getVal(row, col))
-                expect(game1.getRow(boardVal)).toEqual(row)
-                expect(game1.getColumn(boardVal)).toEqual(col)
+                expect(boardVal).toStrictEqual(game1.getVal(row, col));
+                expect(game1.getRow(boardVal)).toEqual(row);
+                expect(game1.getColumn(boardVal)).toEqual(col);
             }
         }
         expect(()=>{game1.getVal(5,4)}).toThrow("getVal out of range");
     });
     it("Test Setters", () =>{
         let gameLogic = new GameLogic({rows: 4, columns: 3});
-        gameLogic.generateBoard(3,4)
-        expect(gameLogic.setVal(0,0,5)).toBe(true)
-        expect(gameLogic.setVal(-1,0,5)).toBe(false)
-        expect(gameLogic.setVal(5,0,5)).toBe(false)
-        expect(gameLogic.setVal(0,-1,5)).toBe(false)
-        expect(gameLogic.setVal(0,4,5)).toBe(false)
+        gameLogic.generateBoard(3,4);
+        expect(gameLogic.setVal(0,0,5)).toBe(true);
+        expect(gameLogic.setVal(-1,0,5)).toBe(false);
+        expect(gameLogic.setVal(5,0,5)).toBe(false);
+        expect(gameLogic.setVal(0,-1,5)).toBe(false);
+        expect(gameLogic.setVal(0,4,5)).toBe(false);
     });
     it("Test Gem Swap", () => {
         let gameBoard = new GameLogic({rows:8, columns:8});
         let gb2 = new GameLogic({rows: 1, columns: 2});
         gb2.randomCreate(2);
         gameBoard.generateBoard(8,8);
-        let gem1 = gameBoard.getVal(3,3)
-        let gem1Type = gem1.getGemType()
-        let gem2 = gameBoard.getVal(3,4)
-        let gem2Type = gem2.getGemType()
-        let gem3 = gameBoard.getVal(4,4)
-        expect(gameBoard.adjacentX(gem1, gem2)).toEqual(true)
-        expect(gameBoard.adjacentY(gem1, gem2)).toEqual(false)
-        expect(gameBoard.canSwap(gem1, gem2)).toEqual(true)
-        expect(gameBoard.canSwap(gem1, gem3)).toEqual(false)
-        gameBoard.swapGems(gem1, gem2)
-        expect(gameBoard.getVal(0,0).getGemType()).toEqual(0)
-        expect(gameBoard.getVal(0,1).getGemType()).toEqual(0)
+        let gem1 = gameBoard.getVal(3,3);
+        let gem1Type = gem1.getGemType();
+        let gem2 = gameBoard.getVal(3,4);
+        let gem2Type = gem2.getGemType();
+        let gem3 = gameBoard.getVal(4,4);
+        expect(gameBoard.adjacentX(gem1, gem2)).toEqual(true);
+        expect(gameBoard.adjacentY(gem1, gem2)).toEqual(false);
+        expect(gameBoard.canSwap(gem1, gem2)).toEqual(true);
+        expect(gameBoard.canSwap(gem1, gem3)).toEqual(false);
+        gameBoard.swapGems(gem1, gem2);
+        expect(gameBoard.getVal(0,0).getGemType()).toEqual(0);
+        expect(gameBoard.getVal(0,1).getGemType()).toEqual(0);
         gameBoard.shuffle();
-        expect(gameBoard.canSwap(gem2, gem3)).toEqual(false)
+        expect(gameBoard.canSwap(gem2, gem3)).toEqual(false);
         expect(gb2.canSwap(gb2.getVal(0,0), gb2.getVal(0,1))).toStrictEqual(false);
 
     })
