@@ -37,6 +37,8 @@ describe("Test Files", () => {
     });
     it("Test Gem Swap", () => {
         let gameBoard = new GameLogic({rows:8, columns:8});
+        let gb2 = new GameLogic({rows: 1, columns: 2});
+        gb2.randomCreate(2);
         gameBoard.generateBoard(8,8);
         let gem1 = gameBoard.getVal(3,3)
         let gem1Type = gem1.getGemType()
@@ -45,17 +47,27 @@ describe("Test Files", () => {
         let gem3 = gameBoard.getVal(4,4)
         expect(gameBoard.adjacentX(gem1, gem2)).toEqual(true)
         expect(gameBoard.adjacentY(gem1, gem2)).toEqual(false)
-        //expect(gameBoard.canSwap(gem1, gem2)).toEqual(true)
+        expect(gameBoard.canSwap(gem1, gem2)).toEqual(true)
         expect(gameBoard.canSwap(gem1, gem3)).toEqual(false)
         gameBoard.swapGems(gem1, gem2)
         expect(gameBoard.getVal(0,0).getGemType()).toEqual(0)
         expect(gameBoard.getVal(0,1).getGemType()).toEqual(0)
         gameBoard.shuffle();
-        //expect(gameBoard.canSwap(gem2, gem3)).toEqual(false)
+        expect(gameBoard.canSwap(gem2, gem3)).toEqual(false)
+        expect(gb2.canSwap(gb2.getVal(0,0), gb2.getVal(0,1))).toStrictEqual(false);
 
     })
     it("Test Utils", () => {
         let gameLogic = new GameLogic({rows: 4, columns: 3});
+        let gb2 = new GameLogic({rows: 1, columns: 3});
+        gb2.generateBoard(3, 1);
+        let gb3 = new GameLogic({rows: 3, columns: 1});
+        gb3.generateBoard(1,3);
+        gb3.setVal(0,0, new Gem(0,0,0))
+        gb3.setVal(1,0, new Gem(0,1,0))
+        gb3.setVal(2,0, new Gem(0,2,0))
+        expect(gb2.isHorizontal()).toEqual(true);
+        expect(gb3.isVertical()).toEqual(true);
         expect(gameLogic.random(0, 100)).toBeLessThan(100)
         expect(gameLogic.random(0, 100)).toBeGreaterThanOrEqual(0)
         expect(gameLogic.isInRange(0,5,5)).toBe(false)

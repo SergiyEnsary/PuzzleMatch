@@ -6,6 +6,7 @@ class GameLogic{
         this.columns = game.columns;
         this.canPick = true;
         this.board = [];
+        this.gems = game.gems;
     }
 
     /*
@@ -39,25 +40,30 @@ class GameLogic{
     swapGems(gem1, gem2){
         let temp1 = new Gem(gem1.getX(), gem1.getY(), gem2.getGemType());
         let temp2 = new Gem(gem2.getX(), gem2.getY(), gem1.getGemType());
+        temp1.setSprite(gem2.getSprite());
+        temp2.setSprite(gem1.getSprite());
         this.setVal(gem1.getY(), gem1.getX(), temp1);
         this.setVal(gem2.getY(), gem2.getX(), temp2);
     }
-    /* Waiting for tests
+
     /*
      * Destroy selected gems
-     *!/
-    destroyGems(gemList){
-        gemList.forEach(this.gemDelete(gem))
+     */
+    destroyGems(gemSet){
+        for(let item of gemSet.values()){
+            this.gemDelete(item);
+        }
+        this.updateGems();
     }
 
     /*
      * Remove a gem
-     *!/
+     */
     gemDelete(gem){
         let row = gem.getY()
-        this.board = this.getBoard()[gem.getX()].splice(row, 1);
+        let board = this.getBoard()[gem.getX()];
+        board.splice(row, 1);
     }
-    */
 
     /*
      * Are two gems next to each other and will they make a match
@@ -73,7 +79,7 @@ class GameLogic{
      * Are two gems adjacent on X with the same y values
      */
     adjacentX(gem1, gem2){
-        let xAdjacent = Math.abs(gem1.getX() - gem2.getX()) <= 1;
+        let xAdjacent = Math.abs(gem1.getX() - gem2.getX()) == 1;
         return (xAdjacent && gem1.getY() === gem2.getY());
     }
 
@@ -81,7 +87,7 @@ class GameLogic{
      * Are two gems adjacent on Y with the same x values
      */
     adjacentY(gem1, gem2){
-        let yAdjacent = Math.abs(gem1.getY() - gem2.getY()) <= 1;
+        let yAdjacent = Math.abs(gem1.getY() - gem2.getY()) == 1;
         return (yAdjacent && gem1.getX() === gem2.getX());
     }
 
@@ -89,10 +95,12 @@ class GameLogic{
      * Is there a horizontal match
      */
     isHorizontal(){
-        for(let col = 0; col < this.getColumns()-2; col++){
+        for(let col = 1; col < this.getColumns()-1; col++){
             for(let row = 0; row < this.getRows(); row ++){
-                let gem = this.getVal(row, col);
-                if(gem.getGemType() === this.getVal(row, col+1).getGemType() &&  gem.getGemType() === this.getVal(row, col+2).getGemType()){
+                let gem1 = this.getVal(row, col-1).getGemType();
+                let gem2 = this.getVal(row, col).getGemType();
+                let gem3 = this.getVal(row, col+1).getGemType();
+                if(gem1 === gem2 && gem1 === gem3){
                     return true;
                 }
             }
@@ -105,9 +113,11 @@ class GameLogic{
      */
     isVertical(){
         for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 0; row < this.getRows()-2; row ++){
-                let gem = this.getVal(row, col);
-                if(gem.getGemType() === this.getVal(row+1, col).getGemType() && gem.getGemType() === this.getVal(row+2, col).getGemType()){
+            for(let row = 1; row < this.getRows()-1; row ++){
+                let gem1 = this.getVal(row-1, col).getGemType();
+                let gem2 = this.getVal(row, col).getGemType();
+                let gem3 = this.getVal(row+1, col).getGemType();
+                if(gem1 === gem2 && gem1 === gem3){
                     return true;
                 }
             }
@@ -145,13 +155,14 @@ class GameLogic{
      * Does this move make a match
      */
     makesMatch(gem1, gem2){
-        if(gem2.getGemType() === this.getVal(gem1.getX()).getGemType())
-        this.swapGems(gem1, gem2)
+        let gem1X = gem1.getX(); let gem1Y = gem1.getY();
+        let gem2X = gem2.getX(); let gem2Y = gem2.getY();
+        this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
         if(this.isVertical() || this.isHorizontal()){
-            this.swapGems(gem1, gem2);
+            this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
             return true;
         }
-        this.swapGems(gem1, gem2);
+        this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
         return false;
     }
 
@@ -211,6 +222,12 @@ class GameLogic{
         }
         return false;
     }
+    /*
+     * Set new column in the board
+     */
+    setCol(col, array){
+        this.board[col] = array;
+    }
 
     /*
      * Return a random number within range min < max(exclusive)
@@ -225,6 +242,54 @@ class GameLogic{
      */
     isInRange(min, max, value){
         return min <= value && value < max;
+    }
+    /*
+     * Return a set of all gems that make up matches
+     */
+    getMatches() {
+        let gemList = new Set();
+        for(let col = 1; col < this.getColumns()-1; col++){
+            for(let row = 0; row < this.getRows(); row++){
+                let gem1 = this.getVal(row, col-1);
+                let gem2 = this.getVal(row, col);
+                let gem3 = this.getVal(row, col+1);
+                if(gem1.getGemType() === gem2.getGemType() && gem1.getGemType() === gem3.getGemType()){
+                    gemList.add(gem1);
+                    gemList.add(gem2);
+                    gemList.add(gem3);
+                }
+            }
+        }
+        for(let col = 0; col < this.getColumns(); col++){
+            for(let row = 1; row < this.getRows()-1; row++){
+                let gem1 = this.getVal(row-1, col);
+                let gem2 = this.getVal(row, col);
+                let gem3 = this.getVal(row+1, col);
+                if(gem1.getGemType() === gem2.getGemType() && gem1.getGemType() === gem3.getGemType()){
+                    gemList.add(gem1);
+                    gemList.add(gem2);
+                    gemList.add(gem3);
+                }
+            }
+        }
+        return gemList;
+    }
+
+    updateGems() {
+        for(let col = 0; col < this.getColumns(); col++){
+            let lengthOfCol = this.getBoard()[col].length;
+            if(lengthOfCol < this.getRows()) {
+                let newGemList = new Array(this.getRows() - lengthOfCol);
+                for (let newRow = 0; newRow < newGemList.length; newRow++) {
+                    newGemList[newRow] = new Gem(col, newRow, this.random(0, this.gems));
+                }
+                this.setCol(col, newGemList.concat(this.getBoard()[col]));
+            }
+            for(let row = 0; row < this.getRows(); row++){
+                this.getVal(row, col).setY(row);
+            }
+        }
+        console.log(this.board)
     }
 }
 
