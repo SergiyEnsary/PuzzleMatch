@@ -40,7 +40,8 @@ class GameScene extends Phaser.Scene{
 
         let size = {
             rows: 8,
-            columns: 8
+            columns: 8,
+            gems: this.gems
         }
         this.gameLogic = new GameLogic(size);
         this.gameLogic.randomCreate(this.gems);
@@ -54,7 +55,9 @@ class GameScene extends Phaser.Scene{
             for(let row = 0; row < this.gameLogic.getColumns(); row ++){
                 let gemX = this.gemSize * col + this.gemSize / 2;
                 let gemY = this.gemSize * row + this.gemSize / 2;
-                let gem = this.physics.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType()).setGravityY(50);
+                let gem = this.physics.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType())
+                gem.setInteractive();
+                gem.setGravityY(50);
                 if(row>0){
                     this.physics.add.collider(gem, this.gameLogic.getVal(row-1, col).getSprite(), function (s1, s2) {
                         var b1 = s1.body;
@@ -75,19 +78,19 @@ class GameScene extends Phaser.Scene{
             }
         }
     }
-
     gemSelect(pointer){
+        console.log(pointer)
         if(this.gameLogic.canPick){
             var row = Math.floor((pointer.y) / this.gemSize);
             var col = Math.floor((pointer.x) / this.gemSize);
-            this.dragging = true;
             if(row < this.gameLogic.getRows() && col < this.gameLogic.getColumns()){
                 var gem = this.gameLogic.getVal(row, col);
-                console.log(gem);
                 if(this.selectedGem != null){
-                    console.log(this.gameLogic.canSwap(this.selectedGem, gem))
-                    if(this.gameLogic.canSwap(this.selectedGem, gem)) {
+                    let canSwap = this.gameLogic.canSwap(this.selectedGem, gem);
+                    if(canSwap == true) {
                         this.gameLogic.swapGems(this.selectedGem, gem);
+                        let gemSet = this.gameLogic.getMatches();
+                        this.gameLogic.destroyGems(gemSet);
                     }
                     this.selectedGem = null;
 
@@ -97,8 +100,8 @@ class GameScene extends Phaser.Scene{
                 }
             }
         }
+        this.drawField()
     }
-
 }
 
 module.exports = GameScene
