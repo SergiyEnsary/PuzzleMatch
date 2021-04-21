@@ -1,11 +1,5 @@
 const GameLogic = require("../javascript/GameLogic.js")
 class GameScene extends Phaser.Scene{
-    air = this.scene.add.group();
-    earth = this.scene.add.group();
-    water = this.scene.add.group();
-    sword = this.scene.add.group();
-    heart = this.scene.add.group();
-    fire = this.scene.add.group();
 
     gems;
     gemNum = 6;
@@ -55,6 +49,12 @@ class GameScene extends Phaser.Scene{
         this.gameLogic = new GameLogic(size);
         this.gameLogic.randomCreate(this.gemNum);
         this.gameLogic.shuffle();
+        this.air = this.add.group();
+        this.earth = this.add.group();
+        this.water = this.add.group();
+        this.sword = this.add.group();
+        this.heart = this.add.group();
+        this.fire = this.add.group();
         this.drawField();
         this.input.on("pointerdown", this.gemSelect, this)
     }
@@ -67,66 +67,53 @@ class GameScene extends Phaser.Scene{
         let earth = this.gameLogic.getGems(4);
         let air = this.gameLogic.getGems(5);
         for(let wgem = 0; wgem < water.length; wgem++) {
-            this.water.add({
-                key: "gems",
-                setXY: {
-                    x: water[wgem].getX() * this.gemSize,
-                    y: water[wgem].getY() * this.gemSize
-                },
-                frame: "water"
-            });
+            this.water.create(
+                water[wgem].getX() * this.gemSize + this.gemSize,
+                water[wgem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                0
+            );
         }
         for(let sgem = 0; sgem < sword.length; sgem++) {
-            this.sword.add({
-                key: "gems",
-                setXY: {
-                    x: sword[sgem].getX() * this.gemSize,
-                    y: sword[sgem].getY() * this.gemSize
-                },
-                frame: "sword"
-            });
+            this.sword.create(
+                sword[sgem].getX() * this.gemSize + this.gemSize,
+                sword[sgem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                1);
         }
         for(let fgem = 0; fgem < fire.length; fgem++) {
-            this.fire.add({
-                key: "gems",
-                setXY: {
-                    x: fire[fgem].getX() * this.gemSize,
-                    y: fire[fgem].getY() * this.gemSize
-                },
-                frame: "fire"
-            });
+            this.fire.create(
+                fire[fgem].getX() * this.gemSize + this.gemSize,
+                fire[fgem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                2
+            );
         }
         for(let hgem = 0; hgem < heart.length; hgem++) {
-            this.heart.add({
-                key: "gems",
-                setXY: {
-                    x: heart[hgem].getX() * this.gemSize,
-                    y: heart[hgem].getY() * this.gemSize
-                },
-                frame: "heart"
-            });
+            this.heart.create(
+                heart[hgem].getX() * this.gemSize + this.gemSize,
+                heart[hgem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                3
+            );
         }
         for(let egem = 0; egem < earth.length; egem++) {
-            this.earth.add({
-                key: "gems",
-                setXY: {
-                    x: earth[egem].getX() * this.gemSize,
-                    y: earth[egem].getY() * this.gemSize
-                },
-                frame: "earth"
-            });
+            this.earth.create(
+                earth[egem].getX() * this.gemSize + this.gemSize,
+                earth[egem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                4
+            );
         }
         for(let agem = 0; agem < air.length; agem++) {
-            this.air.add({
-                key: "gems",
-                setXY: {
-                    x: air[agem].getX() * this.gemSize,
-                    y: air[agem].getY() * this.gemSize
-                },
-                frame: "air"
-            });
+            this.air.create(
+                air[agem].getX() * this.gemSize + this.gemSize,
+                air[agem].getY() * this.gemSize + this.gemSize,
+                "gems",
+                5
+            );
         }
-        console.log(this.air, this.fire, this.earth, this.sword, this.heart. this.water)
+        console.log(this.air, this.fire, this.earth, this.sword, this.heart, this.water)
         /*
         for(let col = 0; col < this.gameLogic.getRows(); col ++){
             for(let row = 0; row < this.gameLogic.getColumns(); row ++){
@@ -139,7 +126,6 @@ class GameScene extends Phaser.Scene{
                 this.gameLogic.getVal(row, col).setSprite(gem);
             }
         }*/
-        console.log(this.gems);
     }
 
     gemSelect(pointer){
@@ -164,6 +150,9 @@ class GameScene extends Phaser.Scene{
             }
         }
     }
+    update(time, delta) {
+        super.update(time, delta);
+    }
 }
 
-module.exports = GameScene
+module.exports = GameScene;

@@ -298,7 +298,6 @@ class GameLogic{
         for(let col = 0; col < this.getColumns(); col++){
             for(let row = 0; row < this.getRows(); row++){
                 let gem = this.getVal(row, col);
-                console.log(gem);
                 if(gem.getGemType() === gemType){
                     gemList.push(gem);
                 }
