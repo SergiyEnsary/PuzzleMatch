@@ -44,6 +44,18 @@ class GameLogic{
         temp2.setSprite(gem1.getSprite());
         this.setVal(gem1.getY(), gem1.getX(), temp1);
         this.setVal(gem2.getY(), gem2.getX(), temp2);
+        return [{
+            row: this.getVal(gem1.getY()),
+            column: this.getVal(gem1.getX()),
+            deltaRow: this.getVal(gem1.getY()) - this.getVal(gem2.getY()),
+            deltaColumn: this.getVal(gem1.getX()) - this.getVal(gem2.getX())
+        },
+            {
+                row: this.getVal(gem2.getY()),
+                column: this.getVal(gem2.getX()),
+                deltaRow: this.getVal(gem2.getY()) - this.getVal(gem1.getY()),
+                deltaColumn: this.getVal(gem2.getX()) - this.getVal(gem1.getX())
+            }]
     }
 
     /*
