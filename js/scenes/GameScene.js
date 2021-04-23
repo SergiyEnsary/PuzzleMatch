@@ -1,7 +1,6 @@
 const GameLogic = require("../javascript/GameLogic.js")
 class GameScene extends Phaser.Scene{
 
-    gems;
     gemNum = 6;
     gemSize = 50;
     selectedGem;
@@ -48,22 +47,18 @@ class GameScene extends Phaser.Scene{
         this.gameLogic = new GameLogic(size);
         this.gameLogic.randomCreate(this.gemNum);
         this.gameLogic.shuffle();
-        this.gems = this.add.group();
         this.drawField();
         this.input.on("pointerdown", this.gemSelect, this)
     }
 
     drawField(){
+        this.pool = [];
         for(let col = 0; col < this.gameLogic.getRows(); col ++){
             for(let row = 0; row < this.gameLogic.getColumns(); row ++){
                 let gemX = this.gemSize * col + this.gemSize / 2;
                 let gemY = this.gemSize * row + this.gemSize / 2;
-                this.gems.create(
-                    gemX,
-                    gemY,
-                    "gems",
-                    this.gameLogic.getVal(row, col).getGemType()
-                );
+                let gem = this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType());
+                this.gameLogic.getVal(row, col).setSprite(gem);
             }
         }
     }
@@ -72,6 +67,7 @@ class GameScene extends Phaser.Scene{
         if(this.gameLogic.canPick){
             var row = Math.floor((pointer.y) / this.gemSize);
             var col = Math.floor((pointer.x) / this.gemSize);
+            console.log(pointer.x, pointer.y);
             if(row < this.gameLogic.getRows() && col < this.gameLogic.getColumns()){
                 var gem = this.gameLogic.getVal(row, col);
                 if(this.selectedGem != null){
@@ -84,17 +80,37 @@ class GameScene extends Phaser.Scene{
                 }
                 else{
                     this.selectedGem = gem;
-                    gem.setScale = 2
-                    this.update();
                 }
             }
         }
     }
     swap(gem){
-        this.gameLogic.swapGems(this.selectedGem, gem);
-        let gemSet = this.gameLogic.getMatches();
-        this.gameLogic.destroyGems(gemSet);
-        /*this.tweens.add({
+        let forTween = this.gameLogic.swapGems(this.selectedGem, gem);
+        let swapGems = 2
+        forTween.forEach(function (gem) {
+            //Tween for gem movement
+            console.log(gem);
+            this.tweens.add({
+                targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
+                x: gem.column + 50 * gem.deltaColumn,
+                y: gem.row + 50 * gem.deltaRow,
+                duration: 1000,
+                callbackScope: this,
+                onComplete: function(){
+                    swapGems--;
+                    if(swapGems === 0){
+                        this.destroyGems();
+                    }
+                }
+            });
+        }.bind(this));
+    }
+
+    destroyGems(){
+        let gemsToDestroy = this.gameLogic.getMatches();
+        this.gameLogic.destroyGems(gemsToDestroy);
+        /* Tween for gem destruction
+        this.tweens.add({
 
         })*/
     }
