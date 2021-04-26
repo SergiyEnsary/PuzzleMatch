@@ -42,20 +42,20 @@ class GameLogic{
         let temp2 = new Gem(gem2.getX(), gem2.getY(), gem1.getGemType());
         temp1.setSprite(gem2.getSprite());
         temp2.setSprite(gem1.getSprite());
+
         this.setVal(gem1.getY(), gem1.getX(), temp1);
         this.setVal(gem2.getY(), gem2.getX(), temp2);
-        return [{
-            row: this.getVal(gem1.getY()),
-            column: this.getVal(gem1.getX()),
-            deltaRow: this.getVal(gem1.getY()) - this.getVal(gem2.getY()),
-            deltaColumn: this.getVal(gem1.getX()) - this.getVal(gem2.getX())
+
+        let rv = [{
+            row: gem1.getY(),
+            column: gem1.getX()
         },
             {
-                row: this.getVal(gem2.getY()),
-                column: this.getVal(gem2.getX()),
-                deltaRow: this.getVal(gem2.getY()) - this.getVal(gem1.getY()),
-                deltaColumn: this.getVal(gem2.getX()) - this.getVal(gem1.getX())
+                row: gem2.getY(),
+                column: gem2.getX()
             }]
+        console.log(rv)
+        return rv;
     }
 
     /*
@@ -167,15 +167,59 @@ class GameLogic{
      * Does this move make a match
      */
     makesMatch(gem1, gem2){
-        let gem1X = gem1.getX(); let gem1Y = gem1.getY();
-        let gem2X = gem2.getX(); let gem2Y = gem2.getY();
-        this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
-        if(this.isVertical() || this.isHorizontal()){
-            this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
-            return true;
+        let gem1col = gem1.getX(); let gem1row = gem1.getY();
+        let gem2col = gem2.getX(); let gem2row = gem2.getY();
+        return (this.isPartOfMatch(gem1row, gem1col, gem2.getGemType()) || this.isPartOfMatch(gem2row, gem2col, gem1.getGemType()))
+    }
+
+    // returns true if the item at (row, column) is part of a match
+    isPartOfMatch(row, column, type){
+        let horizontal = this.isPartOfHorizontalMatch(row, column, type);
+        let vertical = this.isPartOfVerticalMatch(row, column, type);
+        console.log(horizontal, vertical);
+        return horizontal || vertical;
+    }
+
+    // returns true if the item at (row, column) is part of an horizontal match
+    isPartOfHorizontalMatch(row, column, type) {
+        let check1;
+        let check2;
+        let check3;
+        try {
+            check1 = (type === this.getVal(row, column - 1).getGemType() && type === this.getVal(row, column - 2).getGemType());
+        } catch (e) {
+            check1 = false;
         }
-        this.swapGems(this.getVal(gem1Y, gem1X), this.getVal(gem2Y, gem2X))
-        return false;
+        try {
+            check2 = (type === this.getVal(row, column + 1).getGemType() && type === this.getVal(row, column + 2).getGemType());
+        } catch (e) {
+            check2 = false
+        }
+        try {
+            check3 = (type === this.getVal(row, column - 1).getGemType() && type === this.getVal(row, column + 1).getGemType());
+        } catch (e) {
+            check3 = false
+        }
+        console.log(check1, check2, check3);
+        return check1 || check2 || check3;
+    }
+
+    // returns true if the item at (row, column) is part of an horizontal match
+    isPartOfVerticalMatch(row, column, type){
+        let check1;
+        let check2;
+        let check3;
+        try {
+            check1 = (type === this.getVal(row - 1, column).getGemType() && type === this.getVal(row - 2, column).getGemType());
+        } catch (e) {check1 = false;}
+        try{
+            check2 = (type === this.getVal(row + 1, column).getGemType() && type === this.getVal(row + 2, column).getGemType());
+        } catch (e) {check2 = false}
+        try{
+            check3 = (type === this.getVal(row - 1, column).getGemType() && type === this.getVal(row + 1, column).getGemType());
+        } catch (e) {check3 = false}
+        console.log(check1, check2, check3);
+        return check1 || check2 || check3;
     }
 
     /*
@@ -303,19 +347,6 @@ class GameLogic{
                 this.getVal(row, col).setY(row);
             }
         }
-    }
-
-    getGems(gemType) {
-        let gemList = [];
-        for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 0; row < this.getRows(); row++){
-                let gem = this.getVal(row, col);
-                if(gem.getGemType() === gemType){
-                    gemList.push(gem);
-                }
-            }
-        }
-        return gemList;
     }
 }
 
