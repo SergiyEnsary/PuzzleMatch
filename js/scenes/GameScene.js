@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene{
     selectedGem;
     rows = 8;
     columns = 8;
+    poolArray = [];
 
     constructor() {
         super("PlayGame");
@@ -67,12 +68,15 @@ class GameScene extends Phaser.Scene{
         if(this.gameLogic.canPick){
             var row = Math.floor((pointer.y) / this.gemSize);
             var col = Math.floor((pointer.x) / this.gemSize);
-            console.log(pointer.x, pointer.y);
             if(row < this.gameLogic.getRows() && col < this.gameLogic.getColumns()){
                 var gem = this.gameLogic.getVal(row, col);
+                console.log(gem);
                 if(this.selectedGem != null){
+                    console.log("Swapping check", gem, this.selectedGem);
                     let canSwap = this.gameLogic.canSwap(this.selectedGem, gem);
+                    console.log(canSwap);
                     if(canSwap === true) {
+                        console.log(gem, this.selectedGem);
                         this.swap(gem);
                     }
                     this.selectedGem = null;
@@ -85,6 +89,7 @@ class GameScene extends Phaser.Scene{
         }
     }
     swap(gem){
+        console.log("Swapping");
         let forTween = this.gameLogic.swapGems(this.selectedGem, gem);
         let swapGems = 2
         forTween.forEach(function (gem) {
@@ -92,13 +97,14 @@ class GameScene extends Phaser.Scene{
             console.log(gem);
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
-                x: gem.column + 50 * gem.deltaColumn,
-                y: gem.row + 50 * gem.deltaRow,
+                x: gem.column * 50 + 25,
+                y: gem.row * 50 + 25,
                 duration: 1000,
                 callbackScope: this,
                 onComplete: function(){
                     swapGems--;
                     if(swapGems === 0){
+                        console.log("Delete");
                         this.destroyGems();
                     }
                 }
@@ -107,12 +113,28 @@ class GameScene extends Phaser.Scene{
     }
 
     destroyGems(){
+        console.log("Destroying")
         let gemsToDestroy = this.gameLogic.getMatches();
-        this.gameLogic.destroyGems(gemsToDestroy);
-        /* Tween for gem destruction
-        this.tweens.add({
-
-        })*/
+        let gemsDestroyed = 0;
+        console.log(gemsToDestroy);
+        gemsToDestroy.forEach(function (gem) {
+            this.poolArray.push(gem);
+            gemsDestroyed++;
+            console.log(gem);
+            this.tweens.add({
+                targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
+                alpha: 0,
+                duration: 1000,
+                onComplete: function() {
+                    gemsDestroyed--;
+                    /*if(gemsDestroyed === 0){
+                        console.log(gemsToDestroy);
+                        this.gameLogic.destroyGems(gemsToDestroy);
+                        console.log("All gems destroyed");
+                    }*/
+                }
+            })
+        }.bind(this));
     }
 }
 
