@@ -54,18 +54,18 @@ class GameLogic{
                 row: gem2.getY(),
                 column: gem2.getX()
             }]
-        console.log(rv)
         return rv;
     }
 
     /*
      * Destroy selected gems
      */
-    destroyGems(gemSet){
+    destroyGemSet(gemSet){
+        console.log(this.getBoard()[0])
         for(let item of gemSet.values()){
             this.gemDelete(item);
         }
-        this.updateGems();
+        console.log(this.getBoard()[0])
     }
 
     /*
@@ -74,7 +74,8 @@ class GameLogic{
     gemDelete(gem){
         let row = gem.getY()
         let board = this.getBoard()[gem.getX()];
-        board.splice(row, 1);
+        let removed = board.splice(row, 1);
+        console.log(removed);
     }
 
     /*
@@ -176,7 +177,6 @@ class GameLogic{
     isPartOfMatch(row, column, type){
         let horizontal = this.isPartOfHorizontalMatch(row, column, type);
         let vertical = this.isPartOfVerticalMatch(row, column, type);
-        console.log(horizontal, vertical);
         return horizontal || vertical;
     }
 
@@ -200,7 +200,6 @@ class GameLogic{
         } catch (e) {
             check3 = false
         }
-        console.log(check1, check2, check3);
         return check1 || check2 || check3;
     }
 
@@ -218,7 +217,6 @@ class GameLogic{
         try{
             check3 = (type === this.getVal(row - 1, column).getGemType() && type === this.getVal(row + 1, column).getGemType());
         } catch (e) {check3 = false}
-        console.log(check1, check2, check3);
         return check1 || check2 || check3;
     }
 
@@ -333,13 +331,16 @@ class GameLogic{
         return gemList;
     }
 
-    updateGems() {
+    replenishGems() {
+        let newGems = [];
         for(let col = 0; col < this.getColumns(); col++){
             let lengthOfCol = this.getBoard()[col].length;
             if(lengthOfCol < this.getRows()) {
                 let newGemList = new Array(this.getRows() - lengthOfCol);
                 for (let newRow = 0; newRow < newGemList.length; newRow++) {
-                    newGemList[newRow] = new Gem(col, newRow, this.random(0, this.gems));
+                    let newGem = new Gem(col, newRow, this.random(0, this.gems));
+                    newGemList[newRow] = newGem;
+                    newGems.push(newGem);
                 }
                 this.setCol(col, newGemList.concat(this.getBoard()[col]));
             }
@@ -347,6 +348,7 @@ class GameLogic{
                 this.getVal(row, col).setY(row);
             }
         }
+        return newGems;
     }
 }
 
