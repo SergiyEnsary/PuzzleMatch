@@ -33,16 +33,16 @@ describe("Test Files", () => {
         set2.add(gb2.getVal(1,0));
         set2.add(gb2.getVal(2,0));
         expect(gb2.getMatches()).toEqual(set2);
-        gb2.destroyGems(gb2.getMatches());
-        gb2.updateGems();
+        gb2.destroyGemSet(gb2.getMatches());
+        gb2.replenishGems();
 
         let set3 = new Set();
         set3.add(gb3.getVal(0,0));
         set3.add(gb3.getVal(0,1));
         set3.add(gb3.getVal(0,2));
         expect(gb3.getMatches()).toEqual(set3);
-        gb3.destroyGems(gb3.getMatches());
-        gb3.updateGems();
+        gb3.destroyGemSet(gb3.getMatches());
+        gb3.replenishGems();
 
         expect(game1.getRows()).toStrictEqual(2);
         expect(game1.getColumns()).toStrictEqual(2);
