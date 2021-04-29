@@ -61,11 +61,9 @@ class GameLogic{
      * Destroy selected gems
      */
     destroyGemSet(gemSet){
-        console.log(this.getBoard()[0])
         for(let item of gemSet.values()){
             this.gemDelete(item);
         }
-        console.log(this.getBoard()[0])
     }
 
     /*
@@ -75,7 +73,7 @@ class GameLogic{
         let row = gem.getY()
         let board = this.getBoard()[gem.getX()];
         let removed = board.splice(row, 1);
-        console.log(removed);
+        return(row);
     }
 
     /*
@@ -331,6 +329,10 @@ class GameLogic{
         return gemList;
     }
 
+    /*
+     * Create new gems to replenish destroyed ones
+     * Returns list of new gems
+     */
     replenishGems() {
         let newGems = [];
         for(let col = 0; col < this.getColumns(); col++){
@@ -349,6 +351,35 @@ class GameLogic{
             }
         }
         return newGems;
+    }
+
+    // returns the amount of empty spaces below the item at (row, column)
+    emptySpacesBelow(row, column){
+        let result = 0;
+        for(let gem = 0; gem < this.getRows(); gem++){
+
+        }
+        return result;
+    }
+
+    // arranges the board after a match, making items fall down. Returns an object with movement information
+    arrangeBoardAfterMatch(){
+        let result = [];
+        for(let col = 0; col < this.getColumns(); col++){
+            for(let row = 0; row < this.getRows(); row++){
+                let emptySpaces = this.emptySpacesBelow(row, col);
+                if(!this.isEmpty(i, j) && emptySpaces > 0){
+                    this.swapItems(i, j, i + emptySpaces, j)
+                    result.push({
+                        row: i + emptySpaces,
+                        column: j,
+                        deltaRow: emptySpaces,
+                        deltaColumn: 0
+                    });
+                }
+            }
+        }
+        return result;
     }
 }
 
