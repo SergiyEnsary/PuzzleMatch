@@ -133,14 +133,14 @@ class GameScene extends Phaser.Scene{
 
     updateGems(){
         console.log("Generating new gems");
-        let gemsAdded = this.gameLogic.replenishGems();
-        console.log(gemsAdded);
+        let gemsMoved = this.gameLogic.arrangeBoardAfterMatch();
+        console.log(gemsMoved);
         let moved = 0;
-        gemsAdded.forEach(function(gem){
+        gemsMoved.forEach(function(gem){
             moved ++;
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
-                //y: this.gameLogic.stepsDown(gem.getY(), gem.getX()),
+                y:  this.gameLogic.stepsDown(gem.getY(), gem.getX()).deltaRow * 50 + 25,
                 duration: 1000,
                 callbackScope: this,
                 onComplete: function(){
