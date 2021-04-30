@@ -70,10 +70,7 @@ class GameLogic{
      * Remove a gem
      */
     gemDelete(gem){
-        let row = gem.getY()
-        let board = this.getBoard()[gem.getX()];
-        let removed = board.splice(row, 1);
-        return(row);
+        this.setVal(gem.getY(), gem.getX(), null);
     }
 
     /*
@@ -335,46 +332,48 @@ class GameLogic{
      */
     replenishGems() {
         let newGems = [];
-        for(let col = 0; col < this.getColumns(); col++){
-            let lengthOfCol = this.getBoard()[col].length;
-            if(lengthOfCol < this.getRows()) {
-                let newGemList = new Array(this.getRows() - lengthOfCol);
-                for (let newRow = 0; newRow < newGemList.length; newRow++) {
-                    let newGem = new Gem(col, newRow, this.random(0, this.gems));
-                    newGemList[newRow] = newGem;
+        for(let col = 0; col < this.getColumns(); col++) {
+            for (let row = 0; row < this.getRows(); row++) {
+                if(this.getVal(row, col) === null) {
+                    let newGem = new Gem(col, row, this.random(0, this.gems));
+                    this.setVal(row, col, newGem);
                     newGems.push(newGem);
                 }
-                this.setCol(col, newGemList.concat(this.getBoard()[col]));
-            }
-            for(let row = 0; row < this.getRows(); row++){
-                this.getVal(row, col).setY(row);
             }
         }
         return newGems;
     }
 
+
+    /*
+     * Return number of steps the gem needs to take
+     */
+    stepsDown(row, col){
+
+    }
     // returns the amount of empty spaces below the item at (row, column)
     emptySpacesBelow(row, column){
         let result = 0;
-        for(let gem = 0; gem < this.getRows(); gem++){
-
+        while(this.getBoard()[column][row+1] === null){
+            result += 1;
+            row += 1;
         }
         return result;
     }
 
-    // arranges the board after a match, making items fall down. Returns an object with movement information
+    /*
+     * Moves gems down returns list of all gems that need to be moved
+     */
     arrangeBoardAfterMatch(){
         let result = [];
         for(let col = 0; col < this.getColumns(); col++){
             for(let row = 0; row < this.getRows(); row++){
                 let emptySpaces = this.emptySpacesBelow(row, col);
-                if(!this.isEmpty(i, j) && emptySpaces > 0){
-                    this.swapItems(i, j, i + emptySpaces, j)
+                if(emptySpaces > 0){
                     result.push({
-                        row: i + emptySpaces,
-                        column: j,
+                        row: row + emptySpaces,
+                        column: col,
                         deltaRow: emptySpaces,
-                        deltaColumn: 0
                     });
                 }
             }
