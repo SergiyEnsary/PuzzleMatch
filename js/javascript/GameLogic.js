@@ -299,27 +299,11 @@ class GameLogic{
      */
     getMatches() {
         let gemList = new Set();
-        for(let col = 1; col < this.getColumns()-1; col++){
-            for(let row = 0; row < this.getRows(); row++){
-                let gem1 = this.getVal(row, col-1);
-                let gem2 = this.getVal(row, col);
-                let gem3 = this.getVal(row, col+1);
-                if(gem1.getGemType() === gem2.getGemType() && gem1.getGemType() === gem3.getGemType()){
-                    gemList.add(gem1);
-                    gemList.add(gem2);
-                    gemList.add(gem3);
-                }
-            }
-        }
         for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 1; row < this.getRows()-1; row++){
-                let gem1 = this.getVal(row-1, col);
-                let gem2 = this.getVal(row, col);
-                let gem3 = this.getVal(row+1, col);
-                if(gem1.getGemType() === gem2.getGemType() && gem1.getGemType() === gem3.getGemType()){
-                    gemList.add(gem1);
-                    gemList.add(gem2);
-                    gemList.add(gem3);
+            for(let row = 0; row < this.getRows(); row++){
+                let gem = this.getVal(row, col);
+                if(this.isPartOfMatch(row, col, gem.getGemType())){
+                    gemList.add(gem);
                 }
             }
         }
@@ -335,8 +319,9 @@ class GameLogic{
         for(let col = 0; col < this.getColumns(); col++) {
             for (let row = 0; row < this.getRows(); row++) {
                 if(this.getVal(row, col) === null) {
-                    let newGem = new Gem(col, row, this.random(0, this.gems));
-                    this.setVal(row, col, newGem);
+                    let below = this.emptySpacesBelow(row, col);
+                    let newGem = new Gem(col, below, this.random(0, this.gems));
+                    this.setVal(row, below, newGem);
                     newGems.push(newGem);
                 }
             }
@@ -344,19 +329,13 @@ class GameLogic{
         return newGems;
     }
 
-
-    /*
-     * Return number of steps the gem needs to take
-     */
-    stepsDown(row, col){
-
-    }
     // returns the amount of empty spaces below the item at (row, column)
     emptySpacesBelow(row, column){
         let result = 0;
-        while(this.getBoard()[column][row+1] === null){
-            result += 1;
-            row += 1;
+        for(let index = row+1; index < this.getRows(); index++) {
+            if(this.getVal(index, column) === null){
+                result += 1;
+            }
         }
         return result;
     }
@@ -369,9 +348,9 @@ class GameLogic{
         for(let col = 0; col < this.getColumns(); col++){
             for(let row = 0; row < this.getRows(); row++){
                 let emptySpaces = this.emptySpacesBelow(row, col);
-                if(emptySpaces > 0){
+                if(emptySpaces > 0 && this.getVal(row, col) !== null){
                     result.push({
-                        row: row + emptySpaces,
+                        row: row,
                         column: col,
                         deltaRow: emptySpaces,
                     });

@@ -7,7 +7,6 @@ class GameScene extends Phaser.Scene{
     selectedGem;
     rows = 8;
     columns = 8;
-    poolArray = [];
 
     constructor() {
         super("PlayGame");
@@ -96,9 +95,11 @@ class GameScene extends Phaser.Scene{
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
                 x: gem.column * 50 + 25,
                 y: gem.row * 50 + 25,
-                duration: 1000,
+                duration: 500,
                 callbackScope: this,
                 onComplete: function(){
+                    this.gameLogic.getVal(gem.row, gem.column).sprite.setY(gem.row * 50 + 25);
+                    this.gameLogic.getVal(gem.row, gem.column).sprite.setX(gem.column * 50 + 25);
                     swapGems--;
                     if(swapGems === 0){
                         this.destroyGems();
@@ -113,14 +114,14 @@ class GameScene extends Phaser.Scene{
         let gemsToDestroy = this.gameLogic.getMatches();
         let gemsDestroyed = 0;
         gemsToDestroy.forEach(function (gem) {
-            this.poolArray.push(gem);
             gemsDestroyed++;
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
                 alpha: 0,
                 duration: 1000,
                 callbackScope: this,
-                onComplete: function(event, sprite) {
+                onComplete: function() {
+                    this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite().active = false;
                     gemsDestroyed--;
                     if(gemsDestroyed === 0){
                         this.gameLogic.destroyGemSet(gemsToDestroy);
@@ -131,45 +132,55 @@ class GameScene extends Phaser.Scene{
         }.bind(this));
     }
 
-    updateGems(){
-        console.log("Generating new gems");
+    updateGems() {
+        console.log("Moving Gems Down");
         let gemsMoved = this.gameLogic.arrangeBoardAfterMatch();
-        console.log(gemsMoved);
         let moved = 0;
-        gemsMoved.forEach(function(gem){
-            moved ++;
+        gemsMoved.forEach(function (gem) {
+            moved++;
             this.tweens.add({
-                targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
-                y:  this.gameLogic.stepsDown(gem.getY(), gem.getX()).deltaRow * 50 + 25,
-                duration: 1000,
+                targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
+                y: gem.row * 50 + gem.deltaRow * 50 + 25,
+                duration: 200 * gem.deltaRow,
                 callbackScope: this,
-                onComplete: function(){
-                    moved --;
-                    if(moved == 0){
-                        //this.endOfMove()
+                onComplete: function () {
+                    moved--;
+                    if(moved > 0){
+                        this.gameLogic.getVal(gem.row, gem.column).getSprite().y = gem.row * 50 + gem.deltaRow * 50 + 25;
+                    }else{
+                        this.replenish();
                     }
                 }
             })
         }.bind(this));
+    }
 
+    replenish(){
+        console.log("Generating new gems");
         let replenishMovements = this.gameLogic.replenishGems();
+        let moved = 0;
         replenishMovements.forEach(function(gem){
             moved ++;
-            let sprite = this.poolArray.pop();
-            sprite.alpha = 1;
-            //sprite.y = 50 * (gem.row - gem.deltaRow + 1) - 50 / 2;
-            //sprite.x = 50 * gem.column + 50 / 2,
-            //sprite.setFrame(this.match3.valueAt(gem.row, gem.column));
-            //this.match3.setCustomData(gem.row, gem.column, sprite);
+            let gemX = 50 * gem.column + 50 / 2;
+            let gemY = 50 * gem.row + 50 / 2;
+            let sprite = this.add.sprite(-gemX, -gemY, "gems", gem.getGemType());
+            sprite.setX(gemX);
+            sprite.setY(gemY);
+            gem.setSprite(sprite);
+            console.log(gem);
             this.tweens.add({
                 targets: sprite,
                 y: 50 * gem.row + 50 / 2,
-                duration: 1000 * gem.deltaRow,
+                duration: 500,
                 callbackScope: this,
                 onComplete: function(){
                     moved --;
                     if(moved == 0){
-                        //this.endOfMove()
+                        if(this.gameLogic.getMatches() !== []){
+                            this.destroyGems();
+                        } else {
+                            //this.endOfMove()
+                        }
                     }
                 }
             });
