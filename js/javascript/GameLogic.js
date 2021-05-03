@@ -299,11 +299,13 @@ class GameLogic{
      */
     getMatches() {
         let gemList = new Set();
-        for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 0; row < this.getRows(); row++){
+        for (let col = 0; col < this.getColumns(); col++) {
+            for (let row = 0; row < this.getRows(); row++) {
                 let gem = this.getVal(row, col);
-                if(this.isPartOfMatch(row, col, gem.getGemType())){
-                    gemList.add(gem);
+                if(gem !== null) {
+                    if (this.isPartOfMatch(row, col, gem.getGemType())) {
+                        gemList.add(gem);
+                    }
                 }
             }
         }
@@ -320,12 +322,13 @@ class GameLogic{
             for (let row = 0; row < this.getRows(); row++) {
                 if(this.getVal(row, col) === null) {
                     let below = this.emptySpacesBelow(row, col);
-                    let newGem = new Gem(col, below, this.random(0, this.gems));
-                    this.setVal(row, below, newGem);
+                    let newGem = new Gem(col, row, this.random(0, this.gems));
+                    this.setVal(row, col, newGem);
                     newGems.push(newGem);
                 }
             }
         }
+        console.log(this.getBoard());
         return newGems;
     }
 
@@ -341,7 +344,7 @@ class GameLogic{
     }
 
     /*
-     * Moves gems down returns list of all gems that need to be moved
+     * Returns list of all gems that need to be moved
      */
     arrangeBoardAfterMatch(){
         let result = [];
