@@ -86,6 +86,7 @@ describe("Test Files", () => {
         gameBoard.shuffle();
         expect(gameBoard.canSwap(gem2, gem3)).toEqual(false);
         expect(gb2.canSwap(gb2.getVal(0,0), gb2.getVal(0,1))).toStrictEqual(false);
+        gameBoard.arrangeBoardAfterMatch();
 
     })
     it("Test Utils", () => {
@@ -104,6 +105,7 @@ describe("Test Files", () => {
         expect(gameLogic.isInRange(0,5,5)).toBe(false)
         expect(gameLogic.isInRange(0,5,-1)).toBe(false)
         expect(gameLogic.isInRange(0,5,3)).toBe(true)
+        gb3.setCol(0, [])
     })
     it("Test Random Board Generation", () => {
         game1.randomCreate(6);

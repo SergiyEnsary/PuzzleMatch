@@ -125,7 +125,7 @@ class GameScene extends Phaser.Scene{
                     gemsDestroyed--;
                     if(gemsDestroyed === 0){
                         this.gameLogic.destroyGemSet(gemsToDestroy);
-                        this.updateGems();
+                        this.replenish();
                     }
                 }
             });
@@ -136,6 +136,7 @@ class GameScene extends Phaser.Scene{
         console.log("Moving Gems Down");
         let gemsMoved = this.gameLogic.arrangeBoardAfterMatch();
         let moved = 0;
+        console.log(this.gameLogic.getBoard());
         gemsMoved.forEach(function (gem) {
             moved++;
             this.tweens.add({
@@ -170,16 +171,16 @@ class GameScene extends Phaser.Scene{
             console.log(gem);
             this.tweens.add({
                 targets: sprite,
-                y: 50 * gem.row + 50 / 2,
-                duration: 500,
+                y: -gemY,
+                duration: 0,
                 callbackScope: this,
                 onComplete: function(){
                     moved --;
                     if(moved == 0){
-                        if(this.gameLogic.getMatches() !== []){
-                            this.destroyGems();
+                        if(this.gameLogic.getMatches() !== {}){
+                            this.updateGems();
                         } else {
-                            //this.endOfMove()
+                            this.endOfMove()
                         }
                     }
                 }
