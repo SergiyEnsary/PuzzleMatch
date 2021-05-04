@@ -324,11 +324,15 @@ class GameLogic{
                     let below = this.emptySpacesBelow(row, col);
                     let newGem = new Gem(col, row, this.random(0, this.gems));
                     this.setVal(row, col, newGem);
-                    newGems.push(newGem);
+                    newGems.push({
+                        row: row,
+                        column: col,
+                        deltaRow: below,
+                        gem: newGem
+                    });
                 }
             }
         }
-        console.log(this.getBoard());
         return newGems;
     }
 
@@ -349,12 +353,16 @@ class GameLogic{
     arrangeBoardAfterMatch(){
         let result = [];
         for(let col = 0; col < this.getColumns(); col++){
-            for(let row = 0; row < this.getRows(); row++){
+            for(let row = this.getRows()-1; row >= 0; row--){
                 let emptySpaces = this.emptySpacesBelow(row, col);
                 if(emptySpaces > 0 && this.getVal(row, col) !== null){
+                    let gem = this.getVal(row, col)
+                    gem.setY(row);
+                    this.setVal(row + emptySpaces, col, gem);
+                    this.setVal(row, col, null);
                     result.push({
-                        row: row,
-                        column: col,
+                        row: gem.getY() + emptySpaces,
+                        column: gem.getX(),
                         deltaRow: emptySpaces,
                     });
                 }

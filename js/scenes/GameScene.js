@@ -2,11 +2,18 @@ const GameLogic = require("../javascript/GameLogic.js")
 
 class GameScene extends Phaser.Scene{
 
-    gemNum = 6;
-    gemSize = 50;
+    gameSetting = {
+        gemSize: 50,
+        rows: 8,
+        columns: 8,
+        gemNum: 6
+    }
     selectedGem;
-    rows = 8;
-    columns = 8;
+    gemPool;
+    offset = {
+        x: 100,
+        y: 50
+    }
 
     constructor() {
         super("PlayGame");
@@ -18,12 +25,8 @@ class GameScene extends Phaser.Scene{
         let imagePath = "assets/images/";
 
         this.load.spritesheet("gems", spritePath + "gems.png", {
-            frameWidth : this.gemSize,
-            frameHeight: this.gemSize
-        });
-        this.load.spritesheet("border", spritePath+"border.png",{
-            frameWidth : this.gemSize*8,
-            frameHeight: 1
+            frameWidth : this.gameSetting.gemSize,
+            frameHeight: this.gameSetting.gemSize
         });
 
         this.load.image("background", imagePath+"background.png");
@@ -41,23 +44,25 @@ class GameScene extends Phaser.Scene{
         this.background.setOrigin(0,0)
 
         let size = {
-            rows: this.rows,
-            columns: this.columns,
-            gems: this.gemNum
+            rows: this.gameSetting.rows,
+            columns: this.gameSetting.columns,
+            gems: this.gameSetting.gemNum
         }
         this.gameLogic = new GameLogic(size);
-        this.gameLogic.randomCreate(this.gemNum);
+        this.gameLogic.randomCreate(this.gameSetting.gemNum);
         this.gameLogic.shuffle();
+        this.selectedGem = null;
         this.drawField();
         this.input.on("pointerdown", this.gemSelect, this);
     }
 
     drawField(){
         console.log("Drawing Board");
+        this.gemPool = [];
         for(let col = 0; col < this.gameLogic.getRows(); col ++){
             for(let row = 0; row < this.gameLogic.getColumns(); row ++){
-                let gemX = this.gemSize * col + this.gemSize / 2;
-                let gemY = this.gemSize * row + this.gemSize / 2;
+                let gemX = this.offset.x + this.gameSetting.gemSize * col + this.gameSetting.gemSize / 2;
+                let gemY = this.offset.y + this.gameSetting.gemSize * row + this.gameSetting.gemSize / 2;
                 let gem = this.add.sprite(gemX, gemY, "gems", this.gameLogic.getVal(row, col).getGemType());
                 this.gameLogic.getVal(row, col).setSprite(gem);
             }
@@ -66,20 +71,27 @@ class GameScene extends Phaser.Scene{
 
     gemSelect(pointer){
         if(this.gameLogic.canPick){
-            var row = Math.floor((pointer.y) / this.gemSize);
-            var col = Math.floor((pointer.x) / this.gemSize);
+            var row = Math.floor((pointer.y - this.offset.y) / this.gameSetting.gemSize);
+            var col = Math.floor((pointer.x - this.offset.x) / this.gameSetting.gemSize);
             if(row < this.gameLogic.getRows() && col < this.gameLogic.getColumns()){
                 var gem = this.gameLogic.getVal(row, col);
-                if(this.selectedGem != null){
-                    let canSwap = this.gameLogic.canSwap(this.selectedGem, gem);
-                    if(canSwap === true) {
-                        this.swap(gem);
-                    }
-                    this.selectedGem = null;
-
+                if(this.selectedGem === null){
+                    this.selectedGem = gem;
+                    this.selectedGem.getSprite().setScale(1.1);
+                    this.selectedGem.getSprite().setDepth(1);
                 }
                 else{
-                    this.selectedGem = gem;
+                    if(this.selectedGem === gem){
+                        this.selectedGem.setScale(1);
+                        this.selectedGem = null;
+                    } else {
+                        if (this.gameLogic.canSwap(this.selectedGem, gem)) {
+                            this.gameLogic.canPick = false;
+                            gem.getSprite().setScale(1.1);
+                            this.swap(gem);
+                        }
+                        this.selectedGem = null;
+                    }
                 }
             }
         }
@@ -90,16 +102,15 @@ class GameScene extends Phaser.Scene{
         let forTween = this.gameLogic.swapGems(this.selectedGem, gem);
         let swapGems = 2
         forTween.forEach(function (gem) {
+            this.gameLogic.getVal(gem.row, gem.column).getSprite().setScale(1);
             //Tween for gem movement
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
-                x: gem.column * 50 + 25,
-                y: gem.row * 50 + 25,
+                x: gem.column * 50 + this.offset.x + this.gameSetting.gemSize / 2,
+                y: gem.row * 50 + this.offset.y + this.gameSetting.gemSize / 2,
                 duration: 500,
                 callbackScope: this,
                 onComplete: function(){
-                    this.gameLogic.getVal(gem.row, gem.column).sprite.setY(gem.row * 50 + 25);
-                    this.gameLogic.getVal(gem.row, gem.column).sprite.setX(gem.column * 50 + 25);
                     swapGems--;
                     if(swapGems === 0){
                         this.destroyGems();
@@ -114,18 +125,17 @@ class GameScene extends Phaser.Scene{
         let gemsToDestroy = this.gameLogic.getMatches();
         let gemsDestroyed = 0;
         gemsToDestroy.forEach(function (gem) {
+            this.gemPool.push(gem.getSprite());
             gemsDestroyed++;
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
                 alpha: 0,
-                duration: 1000,
+                duration: 500,
                 callbackScope: this,
-                onComplete: function() {
-                    this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite().active = false;
+                onComplete: function(event, sprite) {
                     gemsDestroyed--;
                     if(gemsDestroyed === 0){
-                        this.gameLogic.destroyGemSet(gemsToDestroy);
-                        this.replenish();
+                        this.updateGems();
                     }
                 }
             });
@@ -133,59 +143,63 @@ class GameScene extends Phaser.Scene{
     }
 
     updateGems() {
+        this.gameLogic.destroyGemSet(this.gameLogic.getMatches());
         console.log("Moving Gems Down");
         let gemsMoved = this.gameLogic.arrangeBoardAfterMatch();
         let moved = 0;
-        console.log(this.gameLogic.getBoard());
         gemsMoved.forEach(function (gem) {
             moved++;
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
-                y: gem.row * 50 + gem.deltaRow * 50 + 25,
-                duration: 200 * gem.deltaRow,
+                y: this.gameLogic.getVal(gem.row, gem.column).getSprite().y + gem.deltaRow * this.gameSetting.gemSize,
+                duration: 500 * Math.abs(gem.deltaRow),
                 callbackScope: this,
                 onComplete: function () {
                     moved--;
                     if(moved > 0){
-                        this.gameLogic.getVal(gem.row, gem.column).getSprite().y = gem.row * 50 + gem.deltaRow * 50 + 25;
-                    }else{
-                        this.replenish();
+                        this.endMove();
                     }
                 }
             })
         }.bind(this));
-    }
 
-    replenish(){
         console.log("Generating new gems");
         let replenishMovements = this.gameLogic.replenishGems();
-        let moved = 0;
         replenishMovements.forEach(function(gem){
             moved ++;
-            let gemX = 50 * gem.column + 50 / 2;
-            let gemY = 50 * gem.row + 50 / 2;
-            let sprite = this.add.sprite(-gemX, -gemY, "gems", gem.getGemType());
-            sprite.setX(gemX);
-            sprite.setY(gemY);
-            gem.setSprite(sprite);
-            console.log(gem);
+            let sprite = this.gemPool.pop();
+            sprite.alpha = 1;
+            sprite.y = this.offset.y + this.gameSetting.gemSize * (gem.row - gem.deltaRow + 1) - this.gameSetting.gemSize / 2;
+            sprite.x = this.offset.x + this.gameSetting.gemSize * gem.column + this.gameSetting.gemSize / 2;
+            sprite.setFrame(gem.gem.getGemType());
+            gem.gem.setSprite(sprite);
             this.tweens.add({
                 targets: sprite,
-                y: -gemY,
-                duration: 0,
+                y: this.offset.y + this.gameSetting.gemSize * gem.row + this.gameSetting.gemSize / 2,
+                duration: 500 * gem.deltaRow,
                 callbackScope: this,
                 onComplete: function(){
                     moved --;
-                    if(moved == 0){
-                        if(this.gameLogic.getMatches() !== {}){
-                            this.updateGems();
-                        } else {
-                            this.endOfMove()
-                        }
+                    if(moved === 0){
+                        this.endMove()
                     }
                 }
             });
         }.bind(this));
+    }
+
+    endMove(){
+        if(this.gameLogic.getMatches() !== {}){
+            this.time.addEvent({
+                delay: 250,
+                callback: this.updateGems()
+            });
+        }
+        else{
+            console.log("Turn Ended");
+            this.selectedGem = null;
+            this.gameLogic.canPick = true;
+        }
     }
 }
 
