@@ -47,12 +47,14 @@ class GameLogic{
         this.setVal(gem2.getY(), gem2.getX(), temp2);
 
         let rv = [{
-            row: gem1.getY(),
-            column: gem1.getX()
+            row: gem2.getY(),
+            column: gem2.getX(),
+            gem: temp1
         },
             {
-                row: gem2.getY(),
-                column: gem2.getX()
+                row: gem1.getY(),
+                column: gem1.getX(),
+                gem: temp2
             }]
         return rv;
     }
@@ -61,8 +63,8 @@ class GameLogic{
      * Destroy selected gems
      */
     destroyGemSet(gemSet){
-        for(let item of gemSet.values()){
-            this.gemDelete(item);
+        for(let i = 0; i<gemSet.length; i++) {
+            this.gemDelete(gemSet[i]);
         }
     }
 
@@ -70,7 +72,9 @@ class GameLogic{
      * Remove a gem
      */
     gemDelete(gem){
-        this.setVal(gem.getY(), gem.getX(), null);
+        if(this.getVal(gem.getY(), gem.getX()) !== null) {
+            this.setVal(gem.getY(), gem.getX(), null);
+        }
     }
 
     /*
@@ -309,7 +313,8 @@ class GameLogic{
                 }
             }
         }
-        return gemList;
+        console.log(Array.from(gemList));
+        return Array.from(gemList);
     }
 
     /*

@@ -79,10 +79,9 @@ class GameScene extends Phaser.Scene{
                     this.selectedGem = gem;
                     this.selectedGem.getSprite().setScale(1.1);
                     this.selectedGem.getSprite().setDepth(1);
-                }
-                else{
+                }else{
                     if(this.selectedGem === gem){
-                        this.selectedGem.setScale(1);
+                        this.selectedGem.getSprite().setScale(1);
                         this.selectedGem = null;
                     } else {
                         if (this.gameLogic.canSwap(this.selectedGem, gem)) {
@@ -106,9 +105,9 @@ class GameScene extends Phaser.Scene{
             //Tween for gem movement
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
-                x: gem.column * 50 + this.offset.x + this.gameSetting.gemSize / 2,
-                y: gem.row * 50 + this.offset.y + this.gameSetting.gemSize / 2,
-                duration: 500,
+                x: gem.gem.getSprite().x,
+                y: gem.gem.getSprite().y,
+                duration: 1000,
                 callbackScope: this,
                 onComplete: function(){
                     swapGems--;
@@ -130,7 +129,7 @@ class GameScene extends Phaser.Scene{
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.getY(), gem.getX()).getSprite(),
                 alpha: 0,
-                duration: 500,
+                duration: 1000,
                 callbackScope: this,
                 onComplete: function(event, sprite) {
                     gemsDestroyed--;
@@ -152,7 +151,7 @@ class GameScene extends Phaser.Scene{
             this.tweens.add({
                 targets: this.gameLogic.getVal(gem.row, gem.column).getSprite(),
                 y: this.gameLogic.getVal(gem.row, gem.column).getSprite().y + gem.deltaRow * this.gameSetting.gemSize,
-                duration: 500 * Math.abs(gem.deltaRow),
+                duration: 1000,
                 callbackScope: this,
                 onComplete: function () {
                     moved--;
@@ -176,7 +175,7 @@ class GameScene extends Phaser.Scene{
             this.tweens.add({
                 targets: sprite,
                 y: this.offset.y + this.gameSetting.gemSize * gem.row + this.gameSetting.gemSize / 2,
-                duration: 500 * gem.deltaRow,
+                duration: 1000,
                 callbackScope: this,
                 onComplete: function(){
                     moved --;

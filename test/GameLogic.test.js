@@ -32,7 +32,26 @@ describe("Test Files", () => {
         set2.add(gb2.getVal(0,0));
         set2.add(gb2.getVal(1,0));
         set2.add(gb2.getVal(2,0));
-        expect(gb2.getMatches()).toEqual(set2);
+        expect(gb2.getMatches()).toEqual([
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 0,
+                "y": 0
+            },
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 0,
+                "y": 1
+            },
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 0,
+                "y": 2
+            }
+        ]);
         gb2.destroyGemSet(gb2.getMatches());
         gb2.replenishGems();
 
@@ -40,7 +59,26 @@ describe("Test Files", () => {
         set3.add(gb3.getVal(0,0));
         set3.add(gb3.getVal(0,1));
         set3.add(gb3.getVal(0,2));
-        expect(gb3.getMatches()).toEqual(set3);
+        expect(gb3.getMatches()).toEqual([
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 0,
+                "y": 0
+            },
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 1,
+                "y": 0
+            },
+            {
+                "sprite": null,
+                "type": 0,
+                "x": 2,
+                "y": 0
+            }
+        ]);
         gb3.destroyGemSet(gb3.getMatches());
         gb3.replenishGems();
 
